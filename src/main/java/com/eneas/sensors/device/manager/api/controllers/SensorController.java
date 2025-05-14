@@ -1,40 +1,53 @@
 package com.eneas.sensors.device.manager.api.controllers;
 
+import com.eneas.sensors.device.manager.api.dtos.SensorDetailOutput;
 import com.eneas.sensors.device.manager.api.dtos.SensorInput;
-import com.eneas.sensors.device.manager.commons.IdGenerator;
-import com.eneas.sensors.device.manager.domain.models.Sensor;
-import com.eneas.sensors.device.manager.domain.models.SensorId;
-import com.eneas.sensors.device.manager.domain.repositories.SensorRepository;
+import com.eneas.sensors.device.manager.api.dtos.SensorOutput;
+import com.eneas.sensors.device.manager.domain.services.SensorService;
+import io.hypersistence.tsid.TSID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/sensors")
 @RequiredArgsConstructor
 public class SensorController {
 
-    private final SensorRepository sensorRepository;
+    private final SensorService sensorService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Sensor create(@RequestBody SensorInput input) {
-        Sensor sensor = Sensor
-                .builder()
-                .id(new SensorId(IdGenerator.generateTSID()))
-                .name(input.getName())
-                .ip(input.getIp())
-                .location(input.getLocation())
-                .protocol(input.getProtocol())
-                .model(input.getModel())
-                .enabled(true)
-                .createdAt(new Date())
-                .build();
+    public SensorOutput create(@RequestBody SensorInput input) {
+        SensorOutput sensorOutput = sensorService.create(input);
+        return sensorOutput;
+    }
 
-        sensorRepository.saveAndFlush(sensor);
+    @GetMapping("/{sensorId}/detail")
+    @ResponseStatus(HttpStatus.OK)
+    public SensorDetailOutput getOneWithDetail(@PathVariable TSID sensorId) {
+        SensorDetailOutput sensorDetailOutput = sensorService.getOneWithDetail(sensorId);
+        return sensorDetailOutput;
+    }
 
-        return sensor;
+    @PatchMapping("/{sensorId}")
+    @ResponseStatus(HttpStatus.OK)
+    public SensorOutput update(@PathVariable TSID sensorId, @RequestBody SensorInput input) {
+        SensorOutput sensorOutput = sensorService.update(sensorId, input);
+        return sensorOutput;
+    }
+
+    @DeleteMapping("/{sensorId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable TSID sensorId) {
+        sensorService.delete(sensorId);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<SensorOutput> listAll() {
+        return sensorService.listAll();
     }
 }
