@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="device-manager" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.eneas.sensors.device.manager.DeviceManagerApplication" />
+    <module name="device-manager.main" />
+    <option name="VM_PARAMETERS" value="-XX:MaxRAM=256m" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/microservices/device-manager" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
