@@ -9,6 +9,8 @@ import com.eneas.sensors.device.manager.domain.models.SensorId;
 import com.eneas.sensors.device.manager.domain.repositories.SensorRepository;
 import io.hypersistence.tsid.TSID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -118,5 +120,21 @@ public class SensorService {
                 .toList();
 
         return list;
+    }
+
+    public Page<SensorOutput> search(Pageable pageable) {
+        Page<Sensor> sensors = sensorRepository.findAll(pageable);
+
+        Page<SensorOutput> output = sensors.map(sensor -> SensorOutput.builder()
+                .id(sensor.getId().getValue())
+                .name(sensor.getName())
+                .ip(sensor.getIp())
+                .location(sensor.getLocation())
+                .protocol(sensor.getProtocol())
+                .model(sensor.getModel())
+                .createdAt(sensor.getCreatedAt())
+                .build());
+
+        return output;
     }
 }

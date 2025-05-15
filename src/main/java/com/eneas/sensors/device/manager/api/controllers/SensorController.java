@@ -6,6 +6,9 @@ import com.eneas.sensors.device.manager.api.dtos.SensorOutput;
 import com.eneas.sensors.device.manager.domain.services.SensorService;
 import io.hypersistence.tsid.TSID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +26,12 @@ public class SensorController {
     public SensorOutput create(@RequestBody SensorInput input) {
         SensorOutput sensorOutput = sensorService.create(input);
         return sensorOutput;
+    }
+
+    @GetMapping
+    public Page<SensorOutput> search(@PageableDefault Pageable pageable) {
+        Page<SensorOutput> sensors = sensorService.search(pageable);
+        return sensors;
     }
 
     @GetMapping("/{sensorId}/detail")
@@ -45,7 +54,7 @@ public class SensorController {
         sensorService.delete(sensorId);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @ResponseStatus(HttpStatus.OK)
     public List<SensorOutput> listAll() {
         return sensorService.listAll();
